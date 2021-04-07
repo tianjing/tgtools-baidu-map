@@ -1,15 +1,15 @@
 #spring.main.web-application-type: none
 
 
-map.baidu.download.path: C:/Users/tian_/Desktop/BaiduMapDownloader-master/MapDownload/
+map.baidu.download.path: GisMap
 map.baidu.download.save-mode: sqlite
 # 最大线程数量
 #map.baidu.download.thread: 101
-  # 存储磁盘位置
-  # 下载层级:[3,...,19]
-  #map.baidu.download.level: 5,6,7,8,9
-  # 下载国内区域集合:参考帮助文档
-  #download.scale.china.region=安徽,福建,甘肃,广东,广西,贵州,海南,河北,河南,黑龙江,湖北,湖南,江苏,江西,吉林,辽宁,内蒙古,宁夏,青海,山东,山西,陕西,四川,西藏,新疆,云南,浙江,香港,澳门,台湾
-  #map.baidu.download.region: 江苏
-  # 下载主题:normal（下载最快）,light,dark,redalert,googlelite,grassgreen,midnight,pink
+# 存储磁盘位置
+# 下载层级:[3,...,19]
+#map.baidu.download.level: 5,6,7,8,9
+# 下载国内区域集合:参考帮助文档
+#download.scale.china.region=安徽,福建,甘肃,广东,广西,贵州,海南,河北,河南,黑龙江,湖北,湖南,江苏,江西,吉林,辽宁,内蒙古,宁夏,青海,山东,山西,陕西,四川,西藏,新疆,云南,浙江,香港,澳门,台湾
+#map.baidu.download.region: 江苏
+# 下载主题:normal（下载最快）,light,dark,redalert,googlelite,grassgreen,midnight,pink
 #map.baidu.download.theme: midnight
