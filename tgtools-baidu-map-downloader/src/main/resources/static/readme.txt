@@ -1,0 +1,1 @@
+http://api2.map.bdimg.com/customimage/tile?&x=47&y=14&z=8&scale=1&customid=midnight

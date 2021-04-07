@@ -1,0 +1,142 @@
+package com.github.tianjing.baidu.map.common.dowloader;
+
+import com.github.tianjing.baidu.map.common.bean.Position;
+import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
+import com.github.tianjing.baidu.map.common.bean.Tile;
+import com.github.tianjing.baidu.map.common.util.ThreadPool;
+import com.github.tianjing.baidu.map.common.util.TileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+/**
+ * @author 田径
+ * @date 2021-04-05 11:52
+ * @desc
+ **/
+public class MapDownloader {
+
+    private final Logger logger = LoggerFactory.getLogger(MapDownloader.class);
+    private BlockingQueue<Tile> tileQueue = new LinkedBlockingQueue<>();
+    private int maxQueueSize = 1000000;
+    private ThreadPool threadPool;
+    private TileDownloader downloader;
+    private int threadSize;
+    private TgtoolsBaiduMapProperty tgtoolsBaiduMapProperty;
+
+    public TgtoolsBaiduMapProperty getTgtoolsBaiduMapProperty() {
+        return tgtoolsBaiduMapProperty;
+    }
+
+    public void setDownloadConfigBean(TgtoolsBaiduMapProperty pTgtoolsBaiduMapProperty) {
+        tgtoolsBaiduMapProperty = pTgtoolsBaiduMapProperty;
+    }
+
+    public void start() {
+        threadSize = tgtoolsBaiduMapProperty.getThread();
+        threadPool = new ThreadPool(threadSize);
+        downloader = new TileDownloader(tgtoolsBaiduMapProperty);
+
+        try {
+            addQueue();
+
+            while (!threadPool.isShutdown() && !tileQueue.isEmpty()) {
+                threadPool.execute(() -> {
+                    Tile tile = tileQueue.poll();
+                    if (tileQueue.size() % 1000 == 0) {
+                        logger.info("下载队列 size：{}", tileQueue.size());
+                    }
+                    if (tile != null) {
+                        downloader.download(tile, 0);
+                    } else {
+                        logger.info("本节点任务下载完成");
+                    }
+                });
+            }
+            threadPool.shutdown();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+
+    private void addQueue() throws InterruptedException {
+        String model = tgtoolsBaiduMapProperty.getScale();// ConfigUtil.getInstance().getString("download.scale");
+        if (model.equals("world")) {
+            new Thread(() -> {
+                addWorldTileQueue();
+            }).start();
+        } else if (model.equals("china")) {
+            new Thread(() -> {
+                addChinaTileQueue();
+            }).start();
+        } else {
+            logger.error("download.scale 配置错误");
+        }
+        Thread.sleep(3000);
+    }
+
+    private void addWorldTileQueue() {
+        String levelConfig = tgtoolsBaiduMapProperty.getLevel();// ConfigUtil.getInstance().getString("download.level");
+        List<String> levelList = Arrays.asList(levelConfig.split(","));
+        try {
+            double r = 20037508.34278924;
+            for (String level : levelList) {
+                int z = Integer.parseInt(level);
+                double px = Math.pow(2, (18 - z));
+                double mx = r / (px * 256);
+                int n = new BigDecimal(Math.ceil(mx)).intValue();
+                int m = 0 - n;
+
+                for (long x = m; x < n; x++) {
+                    while (tileQueue.size() > maxQueueSize) {
+                        Thread.sleep(3000);
+                    }
+
+                    for (long y = m; y < n; y++) {
+                        tileQueue.add(new Tile(z, (int) x, (int) y));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    private void addChinaTileQueue() {
+        try {
+            String levelConfig = tgtoolsBaiduMapProperty.getLevel();
+            String regionConfig = tgtoolsBaiduMapProperty.getRegion();
+            List<String> levelList = Arrays.asList(levelConfig.split(","));
+            List<String> regionList = Arrays.asList(regionConfig.split(","));
+            List<Position> positionList = TileUtil.getPositionList(regionList);
+
+            for (String level : levelList) {
+                int z = Integer.parseInt(level);
+                for (Position p : positionList) {
+                    int sx = TileUtil.getTileNum(p.getSwlng(), z);
+                    int sy = TileUtil.getTileNum(p.getSwlat(), z);
+                    int ex = TileUtil.getTileNum(p.getNelng(), z);
+                    int ey = TileUtil.getTileNum(p.getNelat(), z);
+
+                    for (int x = sx; x < ex; x++) {
+                        while (tileQueue.size() > maxQueueSize) {
+                            Thread.sleep(3000);
+                        }
+                        for (int y = sy; y < ey; y++) {
+                            tileQueue.add(new Tile(z, x, y));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        logger.info("tileQueue size:" + tileQueue.size());
+    }
+}
