@@ -20,16 +20,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DownloadStarterConfig {
 
-    /**
-     * 配置文件
-     *
-     * @return
-     */
-    @Bean
-    public TgtoolsBaiduMapProperty tgtoolsBaiduMapProperty() {
-        return new TgtoolsBaiduMapProperty();
-    }
-
     @Bean
     public DownloadStarterApplicationRunner downloadStarterApplicationRunner() {
         return new DownloadStarterApplicationRunner();

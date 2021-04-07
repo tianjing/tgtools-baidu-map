@@ -1,7 +1,8 @@
-package com.github.tianjing.baidu.map.common.offline.service.custom;
+package com.github.tianjing.baidu.map.common.service.custom;
 
 import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
-import com.github.tianjing.baidu.map.common.offline.service.TileService;
+import com.github.tianjing.baidu.map.common.service.TileService;
+import com.github.tianjing.baidu.map.common.util.FolderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tgtools.exceptions.APPErrorException;
@@ -27,7 +28,7 @@ public class CustomFileTileService implements TileService {
     @Override
     public byte[] getTile(int pX, int pY, int pZoom, String pTheme) {
         String vPath = tgtoolsBaiduMapProperty.getPath();
-        File vDir = initDir(vPath, pX, pZoom);
+        File vDir = FolderUtil.createFolder(vPath, pX, pZoom);
         File vFile = initFile(vDir, pY);
         if (vFile.exists()) {
             try {
@@ -43,7 +44,7 @@ public class CustomFileTileService implements TileService {
     @Override
     public void saveTile(int pX, int pY, int pZoom, String pTheme, byte[] pImage) {
         String vPath = tgtoolsBaiduMapProperty.getPath();
-        File vDir = initDir(vPath, pX, pZoom);
+        File vDir = FolderUtil.createFolder(vPath, pX, pZoom);
         File vFile = initFile(vDir, pY);
 
         try {
@@ -56,19 +57,11 @@ public class CustomFileTileService implements TileService {
     @Override
     public boolean hasTile(int pX, int pY, int pZoom, String pStyle) {
         String vPath = tgtoolsBaiduMapProperty.getPath();
-        File vDir = initDir(vPath, pX, pZoom);
+        File vDir = FolderUtil.createFolder(vPath, pX, pZoom);
         File vFile = initFile(vDir, pY);
         return vFile.exists();
     }
 
-
-    protected File initDir(String pPath, int pX, int pZoom) {
-        File vLocalFileDir = new File(pPath + "/" + pZoom + "/" + pX);
-        if (!vLocalFileDir.exists()) {
-            vLocalFileDir.mkdirs();
-        }
-        return vLocalFileDir;
-    }
 
     protected File initFile(File pLocalFileDir, int pY) {
         return new File(pLocalFileDir + "/" + pY + ".png");

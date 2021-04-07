@@ -1,7 +1,7 @@
 package com.github.tianjing.baidu.map.common.controller;
 
 import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
-import com.github.tianjing.baidu.map.common.offline.service.TileServiceFactory;
+import com.github.tianjing.baidu.map.common.service.TileServiceFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;

@@ -19,7 +19,7 @@ public class TgtoolsBaiduMapProperty {
     /**
      * # 下载层级:[3,...,19]
      */
-    @Value("${map.baidu.download.level:1,2,3,4,5,6,7,8,9,10,11,12,13}")
+    @Value("${map.baidu.download.level:1,2,3,4,5,6,7,8,9}")
     private String level;
     /**
      * 下载规模:world/china

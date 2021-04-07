@@ -3,8 +3,8 @@ package com.github.tianjing.baidu.map.common.dowloader;
 
 import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
 import com.github.tianjing.baidu.map.common.bean.Tile;
-import com.github.tianjing.baidu.map.common.offline.service.TileService;
-import com.github.tianjing.baidu.map.common.offline.service.TileServiceFactory;
+import com.github.tianjing.baidu.map.common.service.TileService;
+import com.github.tianjing.baidu.map.common.service.TileServiceFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.CookieSpecs;

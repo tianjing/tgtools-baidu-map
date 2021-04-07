@@ -1,8 +1,8 @@
-package com.github.tianjing.baidu.map.common.offline.service;
+package com.github.tianjing.baidu.map.common.service;
 
 import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
-import com.github.tianjing.baidu.map.common.offline.service.custom.CustomFileTileService;
-import com.github.tianjing.baidu.map.common.offline.service.custom.CustomSqliteTileService;
+import com.github.tianjing.baidu.map.common.service.custom.CustomFileTileService;
+import com.github.tianjing.baidu.map.common.service.custom.CustomSqliteTileService;
 
 /**
  * @author 田径

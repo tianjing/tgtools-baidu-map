@@ -1,24 +1,23 @@
-package com.github.tianjing.baidu.map.common.offline.sqlite;
+package com.github.tianjing.baidu.map.common.util;
 
 import com.zaxxer.hikari.HikariDataSource;
 import tgtools.db.DataSourceDataAccess;
 import tgtools.exceptions.APPErrorException;
-
-import java.sql.SQLException;
 
 /**
  * @author 田径
  * @date 2021-04-07 11:07
  * @desc
  **/
-public class SqliteFactory {
+public class SqliteUtil {
 
-    public static void initDB(String pFilePath) throws APPErrorException
-    {
+    public static void initDB(String pFilePath) throws APPErrorException {
         createDB(pFilePath);
         createCustomTable();
     }
+
     protected static void createDB(String pFilePath) throws APPErrorException {
+        FolderUtil.createFolder(pFilePath);
 
         HikariDataSource vHikariDataSource = new HikariDataSource();
         vHikariDataSource.setPoolName("SQLiteConnectionPool");
@@ -50,8 +49,7 @@ public class SqliteFactory {
         } catch (Exception e) {
             if (e.toString().indexOf("table CUSTOM already exists") < 1) {
                 throw e;
-            }
-            else{
+            } else {
                 System.out.println("表已存在");
             }
         }

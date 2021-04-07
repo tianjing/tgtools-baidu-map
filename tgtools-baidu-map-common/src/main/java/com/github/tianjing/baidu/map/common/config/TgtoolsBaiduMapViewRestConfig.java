@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @desc
  **/
 @Configuration
-public class MapRestConfig {
+public class TgtoolsBaiduMapViewRestConfig {
 
     @Bean
     public CustomImageController customImageController(TgtoolsBaiduMapProperty pTgtoolsBaiduMapProperty) {
