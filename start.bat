@@ -1,0 +1,1 @@
+D:\public\java\zulu8.38.0.13-ca-jdk8.0.212-win_x64\bin\java -jar tgtools-baidu-map-downloader-1.0.jar
