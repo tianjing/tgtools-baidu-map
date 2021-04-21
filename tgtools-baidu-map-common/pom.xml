@@ -6,7 +6,7 @@
 
     <groupId>com.github.tianjing</groupId>
     <artifactId>tgtools-baidu-map-common</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/tianjing/tgtools-baidu-map.git</url>

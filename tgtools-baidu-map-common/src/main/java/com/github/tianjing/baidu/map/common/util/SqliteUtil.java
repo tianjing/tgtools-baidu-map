@@ -45,7 +45,7 @@ public class SqliteUtil {
                 "   FILE        BLOB, \n" +
                 "primary key (X, Y, ZOOM,THEME));";
         try {
-            tgtools.db.DataBaseFactory.getDefault().executeUpdate(vTable);
+            tgtools.db.DataBaseFactory.get("SQLITEDATAACCESS").executeUpdate(vTable);
         } catch (Exception e) {
             if (e.toString().indexOf("table CUSTOM already exists") < 1) {
                 throw e;

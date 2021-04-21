@@ -32,7 +32,7 @@ public class CustomSqliteTileService implements TileService {
     public byte[] getTile(int pX, int pY, int pZoom, String pTheme) {
         try {
             String vSql = String.format("select FILE FROM CUSTOM WHERE X=%s AND Y =%s AND ZOOM=%s AND THEME='%s'", pX, pY, pZoom, pTheme);
-            DataTable vTable = tgtools.db.DataBaseFactory.getDefault().query(vSql);
+            DataTable vTable = tgtools.db.DataBaseFactory.get("SQLITEDATAACCESS").query(vSql);
             if (DataTable.hasData(vTable)) {
                 return (byte[]) vTable.getRow(0).getValue("FILE");
             }
@@ -47,7 +47,7 @@ public class CustomSqliteTileService implements TileService {
     public void saveTile(int pX, int pY, int pZoom, String pTheme, byte[] pImage) {
         try {
             String vSql = String.format("insert into CUSTOM (X,Y,ZOOM,THEME,FILE) VALUES(%s ,%s ,%s ,'%s',?)", pX, pY, pZoom, pTheme);
-            tgtools.db.DataBaseFactory.getDefault().executeBlob(vSql, pImage);
+            tgtools.db.DataBaseFactory.get("SQLITEDATAACCESS").executeBlob(vSql, pImage);
         } catch (Exception e) {
             if (e.toString().indexOf("constraint") < 1) {
                 logger.error(String.format("保存切片出错！x:%s y:%s zoom:%s theme:%s", pX, pY, pZoom, pTheme), e);
@@ -60,7 +60,7 @@ public class CustomSqliteTileService implements TileService {
     public boolean hasTile(int pX, int pY, int pZoom, String pTheme) {
         try {
             String vSql = String.format("select count(*) num FROM CUSTOM WHERE X=%s AND Y =%s AND ZOOM=%s AND THEME='%s'", pX, pY, pZoom, pTheme);
-            DataTable vTable = tgtools.db.DataBaseFactory.getDefault().query(vSql);
+            DataTable vTable = tgtools.db.DataBaseFactory.get("SQLITEDATAACCESS").query(vSql);
             Integer vCount = (Integer) vTable.getRow(0).getValue("NUM");
             return vCount > 0;
         } catch (Exception e) {

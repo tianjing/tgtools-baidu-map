@@ -2,7 +2,7 @@ package com.github.tianjing.baidu.map.common.bean;
 
 /**
  * @author zhoun945@gmail
- * @Date 2018-03-27
+ * @date 2018-03-27
  */
 public class Position {
 
