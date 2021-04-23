@@ -7,6 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tgtools.data.DataTable;
 import tgtools.exceptions.APPErrorException;
+import tgtools.util.FileUtil;
+import tgtools.util.StringUtil;
+
+import java.io.File;
 
 /**
  * @author 田径
@@ -16,7 +20,9 @@ import tgtools.exceptions.APPErrorException;
 public class CustomSqliteTileService implements TileService {
 
     protected TgtoolsBaiduMapProperty downloadBaiduConfig;
-    Logger logger = LoggerFactory.getLogger(CustomSqliteTileService.class);
+    protected Logger logger = LoggerFactory.getLogger(CustomSqliteTileService.class);
+    protected byte[] noPic;
+
 
     @Override
     public void setDownloadBaiduConfigBean(TgtoolsBaiduMapProperty pDownloadBaiduConfigBean) {
@@ -67,6 +73,27 @@ public class CustomSqliteTileService implements TileService {
             logger.error(String.format("查询地图切片存在出错！x:%s y:%s zoom:%s theme:%s", pX, pY, pZoom, pTheme), e);
         }
         return false;
+    }
+
+    protected byte[] getNoPic() {
+        if (null != noPic && noPic.length > 0) {
+            return noPic;
+        }
+
+        if (StringUtil.isNotEmpty(downloadBaiduConfig.getNoPic())) {
+            return new byte[0];
+        }
+
+        File vFile = new File(downloadBaiduConfig.getNoPic());
+        if (vFile.exists() && vFile.isFile()) {
+            try {
+                noPic = FileUtil.readFileToByte(downloadBaiduConfig.getNoPic());
+                return noPic;
+            } catch (Throwable e) {
+                return new byte[0];
+            }
+        }
+        return new byte[0];
     }
 
 }

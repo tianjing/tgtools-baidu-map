@@ -48,6 +48,9 @@ public class TgtoolsBaiduMapProperty {
     @Value("${map.baidu.download.cover:true}")
     private Boolean cover;
 
+    @Value("${map.baidu.view.nopic:}")
+    private String noPic;
+
 
     public Integer getThread() {
         return thread;
@@ -111,5 +114,13 @@ public class TgtoolsBaiduMapProperty {
 
     public void setSaveMode(String pSaveMode) {
         saveMode = pSaveMode;
+    }
+
+    public String getNoPic() {
+        return noPic;
+    }
+
+    public void setNoPic(String pNoPic) {
+        noPic = pNoPic;
     }
 }

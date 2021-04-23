@@ -34,7 +34,6 @@ public class CustomImageController {
         String vY = pRequest.getParameter("y");
         String vZ = pRequest.getParameter("z");
         String vCustomId = pRequest.getParameter("customid");
-        System.out.println("x:" + vX + ";y:" + vY + ";z:" + vZ + ";customid:" + vCustomId);
 
         pResponse.reset();
         pResponse.setContentType("image/png");
