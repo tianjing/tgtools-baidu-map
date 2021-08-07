@@ -7,8 +7,10 @@ import com.github.tianjing.baidu.map.common.util.ThreadPool;
 import com.github.tianjing.baidu.map.common.util.TileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tgtools.util.StringUtil;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -82,8 +84,18 @@ public class MapDownloader {
     }
 
     private void addWorldTileQueue() {
-        String levelConfig = tgtoolsBaiduMapProperty.getLevel();// ConfigUtil.getInstance().getString("download.level");
-        List<String> levelList = Arrays.asList(levelConfig.split(","));
+        String levelConfig = tgtoolsBaiduMapProperty.getLevel();
+        List<String> levelList = null;
+        if (levelConfig.indexOf(",") >= 0) {
+            levelList = parseLevelByComma(levelConfig);
+        } else if (levelConfig.indexOf("-") >= 0) {
+            levelList = parseLevelByMinus(levelConfig);
+        }
+
+        if (null == levelList || levelList.size() < 1) {
+            return;
+        }
+
         try {
             double r = 20037508.34278924;
             for (String level : levelList) {
@@ -108,13 +120,60 @@ public class MapDownloader {
         }
     }
 
+    protected List<String> parseLevelByComma(String pLevel) {
+        if (StringUtil.isEmpty(pLevel)) {
+            return new ArrayList<>();
+        }
+
+        return Arrays.asList(pLevel.split(","));
+    }
+
+    protected List<String> parseLevelByMinus(String pLevel) {
+        ArrayList<String> vResult = new ArrayList<>();
+        if (StringUtil.isEmpty(pLevel)) {
+            return vResult;
+        }
+
+        String[] vLevels = pLevel.split("-");
+        if (vLevels.length != 2) {
+            return vResult;
+        }
+        Integer vStart = Integer.valueOf(vLevels[0]);
+        Integer vEnd = Integer.valueOf(vLevels[1]);
+
+        for (; vStart <= vEnd; vStart++) {
+            vResult.add(String.valueOf(vStart));
+        }
+        return vResult;
+    }
+
+    private List<Position> getDownloadPosition() {
+        if (StringUtil.isNotEmpty(tgtoolsBaiduMapProperty.getRegion())) {
+            String regionConfig = tgtoolsBaiduMapProperty.getRegion();
+            List<String> regionList = Arrays.asList(regionConfig.split(","));
+            return TileUtil.getPositionList(regionList);
+        } else if (null != tgtoolsBaiduMapProperty.getDownloadPosition() && tgtoolsBaiduMapProperty.getDownloadPosition().size() > 0) {
+            return tgtoolsBaiduMapProperty.getDownloadPosition();
+        }
+
+        return new ArrayList<>();
+    }
+
     private void addChinaTileQueue() {
         try {
             String levelConfig = tgtoolsBaiduMapProperty.getLevel();
-            String regionConfig = tgtoolsBaiduMapProperty.getRegion();
-            List<String> levelList = Arrays.asList(levelConfig.split(","));
-            List<String> regionList = Arrays.asList(regionConfig.split(","));
-            List<Position> positionList = TileUtil.getPositionList(regionList);
+            List<String> levelList = null;
+            if (levelConfig.indexOf(",") >= 0) {
+                levelList = parseLevelByComma(levelConfig);
+            } else if (levelConfig.indexOf("-") >= 0) {
+                levelList = parseLevelByMinus(levelConfig);
+            }
+
+            if (null == levelList || levelList.size() < 1) {
+                return;
+            }
+
+            List<Position> positionList = getDownloadPosition();
 
             for (String level : levelList) {
                 int z = Integer.parseInt(level);

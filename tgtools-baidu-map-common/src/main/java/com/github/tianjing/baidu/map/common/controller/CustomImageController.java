@@ -2,6 +2,7 @@ package com.github.tianjing.baidu.map.common.controller;
 
 import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
 import com.github.tianjing.baidu.map.common.service.TileServiceFactory;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +14,7 @@ import java.io.IOException;
  * @date 2021-04-06 11:55
  * @desc
  **/
-
+@Controller
 @RequestMapping("/baidu/custom")
 public class CustomImageController {
 

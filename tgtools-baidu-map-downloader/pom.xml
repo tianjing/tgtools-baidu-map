@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.github.tianjing</groupId>
             <artifactId>tgtools-baidu-map-common</artifactId>
-            <version>1.0</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

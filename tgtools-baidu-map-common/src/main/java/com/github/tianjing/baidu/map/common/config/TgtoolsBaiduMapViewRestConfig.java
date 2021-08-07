@@ -2,6 +2,7 @@ package com.github.tianjing.baidu.map.common.config;
 
 import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
 import com.github.tianjing.baidu.map.common.controller.CustomImageController;
+import com.github.tianjing.baidu.map.common.controller.DownloadImageController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,4 +21,10 @@ public class TgtoolsBaiduMapViewRestConfig {
         return vCustomImageController;
     }
 
+    @Bean
+    public DownloadImageController downloadImageController(TgtoolsBaiduMapProperty pTgtoolsBaiduMapProperty) {
+        DownloadImageController vDownloadImageController = new DownloadImageController();
+        vDownloadImageController.setDownloadBaiduConfig(pTgtoolsBaiduMapProperty);
+        return vDownloadImageController;
+    }
 }

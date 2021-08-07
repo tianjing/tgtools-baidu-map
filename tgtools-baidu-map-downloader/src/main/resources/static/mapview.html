@@ -7,7 +7,7 @@
     <meta name="Keywords" content="">
     <meta name="Description" content="">
     <title>Document</title>
-<!--    <link rel="stylesheet" href="ui/leaflet1.3/leaflet.css">-->
+    <!--    <link rel="stylesheet" href="ui/leaflet1.3/leaflet.css">-->
 
     <script src="js/jquery-1.11.3.min.js"></script>
     <script src="webjars/map/leaflet/leafletboot1.js"></script>
@@ -15,33 +15,96 @@
     <!--    <script src="ui/leaflet1.3/leaflet-src.js"></script>-->
 
 
-<!--    <script src="ui/leaflet1.3/proj4/proj4.js"></script>-->
-<!--    <script src="ui/leaflet1.3/proj4/proj4leaflet.js"></script>-->
-<!--    <script src="ui/leaflet1.3/leaflet-baidu/tileLayer.baidu.js"></script>-->
+    <!--    <script src="ui/leaflet1.3/proj4/proj4.js"></script>-->
+    <!--    <script src="ui/leaflet1.3/proj4/proj4leaflet.js"></script>-->
+    <!--    <script src="ui/leaflet1.3/leaflet-baidu/tileLayer.baidu.js"></script>-->
+    <style>
+       html,body{
+         height:100%;
+        }
 
+
+
+
+
+
+    </style>
 </head>
 <body style="font-size:20px;letter-spacing:2px;line-height:1.5em;font-family: Helvetica, 'Hiragino Sans GB', 'Microsoft Yahei', '微软雅黑', Arial, sans-serif;text-align: center;">
+<div style="width:100%;height:100%;">
+    <div>
+        图层样式<select id="style">
+        <option value="normal" selected="selected">normal</option>
+        <option value="light">light</option>
+        <option value="dark">dark</option>
+        <option value="redalert">redalert</option>
+        <option value="googlelite">googlelite</option>
+        <option value="grassgreen">grassgreen</option>
+        <option value="midnight">midnight</option>
+        <option value="pink">pink</option>
+    </select>
 
-<div id="mapdiv" style="width:1100px;height:500px;margin:auto"></div>
-
+        中心
+        lng:<input style="width:100px;" id="lng" type="number" value="32.05000">
+        lat:<input style="width:100px;" id="lat" type="number" value="118.78333">
+        <button onclick="reload();" style="bottom: 50px;">重新加载</button>
+    </div>
+    <div id="mapdiv" style="width:100%;height:90%;margin:auto"></div>
+</div>
 </body>
 <script type="text/javascript">
- <!--
 	$(document).ready(function(){
+	  initMap();
+	});
+
+  function initMap(){
+      var style = getUrlParam("style");
+      var lng =  getUrlParam("lng");
+      var lat = getUrlParam("lat");
+       if(null == style || ""== style){
+            style = "normal";
+       }
+
+       if(null == lng || ""== lng){
+            lng =32.05000;
+       }
+       if(null == lat || ""== lat){
+            lat =118.78333;
+       }
+
+       $("#style").val(style);
+       $("#lng").val(lng);
+       $("#lat").val(lat);
+
+
 		var options = {
-            center: [32.05000,118.78333], // The initial center(baidu BD-09 format) of map
+            center: [lng,lat], // The initial center(baidu BD-09 format) of map
             zoom: 8, // initial zoom of map
 			crs: L.CRS.Baidu,
 			layers: [new L.tileLayer.baidu({
 			layer: 'custom',
-			customid:'midnight',
+			customid:style,//normal,midnight
 			url:{'custom':'http://127.0.0.1:8080/baidu/custom/tile?&x={x}&y={y}&z={z}&scale=1&customid={customid}'}
 			})]
         };
         var map = L.map("mapdiv", options);
-		L.marker([32.05000,118.78333]).addTo(map).bindTooltip("南京").openTooltip();
-	});
- //-->
+		L.marker([lng,lat]).addTo(map).bindTooltip("中心点").openTooltip();
+  }
+
+function reload()
+{
+       var style = $("#style").val();
+       var lng = $("#lng").val();
+       var lat = $("#lat").val();
+      window.location = "mapview.html?style="+style+"&lng="+lng+"&lat="+lat;
+}
+
+
+function getUrlParam(name) {
+ var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+ var r = window.location.search.substr(1).match(reg); //匹配目标参数
+ if (r != null) return unescape(r[2]); return null; //返回参数值
+}
 
 
 </script>

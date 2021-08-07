@@ -2,6 +2,8 @@ package com.github.tianjing.baidu.map.common.bean;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.List;
+
 /**
  * @author 田径
  * @date 2021-04-05 12:07
@@ -51,6 +53,15 @@ public class TgtoolsBaiduMapProperty {
     @Value("${map.baidu.view.nopic:}")
     private String noPic;
 
+    private List<Position> downloadPosition;
+
+    public List<Position> getDownloadPosition() {
+        return downloadPosition;
+    }
+
+    public void setDownloadPosition(List<Position> pDownloadPosition) {
+        downloadPosition = pDownloadPosition;
+    }
 
     public Integer getThread() {
         return thread;

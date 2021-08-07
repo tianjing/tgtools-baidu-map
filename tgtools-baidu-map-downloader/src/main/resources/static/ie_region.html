@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-  <style type="text/css">
-    body, html, #allmap {
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <style type="text/css">
+    body,
+    html,
+    #allmap {
       width: 100%;
       height: 100%;
       overflow: hidden;
@@ -22,26 +24,53 @@
       background: #fff;
       padding: 5px;
     }
-  </style>
-  <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
-  <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1XjLLEhZhQNUzd93EjU5nOGQ"></script>
-  <title>添加行政区划</title>
+.BMapLib_polygon{display:none;}
+.BMapLib_polyline{display:none;}
+.BMapLib_circle{display:none;}
+.BMapLib_marker{display:none;}
+
+
+
+    </style>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1XjLLEhZhQNUzd93EjU5nOGQ"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
+    <link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css"/>
+    <!--加载检索信息窗口-->
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
+    <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css"/>
+
+    <title>添加行政区划</title>
 </head>
+
 <body>
 <div id="allmap"></div>
 <div id="panel">
-  <div>
-    <input type="text" id="keyword" value="海淀区"/>
-    <input type="button" value="查看范围" id="commitBtn"/>
-    边界经纬度坐标
-    <textarea id="pathStr"></textarea>
-    边界墨卡托坐标
-    <textarea id="pathMc"></textarea>
-  </div>
-  <div id="result">
-  </div>
+    <div>
+        边界经纬度坐标
+        <textarea id="result" readonly="readonly" style="width: 300px;height:70px;"></textarea>
+        图层LEVEL<input style="width:35px;" id="level_start" type="number" value="5">
+        -
+        <input style="width:35px;" id="level_end" type="number" value="15">
+        图层样式<select id="style">
+        <option value="normal">normal</option>
+        <option value="light">light</option>
+        <option value="dark">dark</option>
+        <option value="redalert">redalert</option>
+        <option value="googlelite">googlelite</option>
+        <option value="grassgreen">grassgreen</option>
+        <option value="midnight">midnight</option>
+        <option value="pink">pink</option>
+    </select>
+        <button onclick="clearAll();" style="bottom: 50px;">清除框选</button>
+        <button onclick="clearAll();" style="bottom: 50px;">清除框选</button>
+        <button onclick="download();" style="bottom: 50px;">下载选择的地图</button>
+    </div>
 </div>
 </body>
+
 </html>
 <script type="text/javascript">
   // 百度地图API功能
@@ -49,49 +78,170 @@
   map.centerAndZoom(new BMap.Point(116.403765, 39.914850), 5);
   map.enableScrollWheelZoom();
   var mercatorProjection = map.getMapType().getProjection();
-  $("#commitBtn").bind('click', function () {
-    getBoundary($("#keyword").val());
+
+
+  var overlays = [];
+  //回调获得覆盖物信息
+  var overlaycomplete = function (e) {
+    clearAll();
+
+    overlays.push(e.overlay);
+    var result = "";
+    result = "";
+    result += e.drawingMode + ":<br/>";
+    if (e.drawingMode == BMAP_DRAWING_MARKER) {
+      result += ' 坐标：' + e.overlay.getPosition().lng + ',' + e.overlay.getPosition().lat;
+      if ($('isInfowindow').checked) {
+        searchInfoWindow.open(e.overlay);
+      }
+    }
+    if (e.drawingMode == BMAP_DRAWING_CIRCLE) {
+      result += ' 半径：' + e.overlay.getRadius();
+      result += ' 中心点：' + e.overlay.getCenter().lng + "," + e.overlay.getCenter().lat;
+    }
+    if (e.drawingMode == BMAP_DRAWING_POLYLINE || e.drawingMode == BMAP_DRAWING_POLYGON || e.drawingMode == BMAP_DRAWING_RECTANGLE) {
+      //for(var i=0;i< e.overlay.getPath().length;i++){
+      //result += '点' + i +"lng:"+ e.overlay.Ao[i].lng+";;lat:"+ e.overlay.Ao[i].lat+"<br/>";
+      changeOverlays(e.overlay);
+      //}
+    }
+
+    // $("#result").html(result); //将绘制的覆盖物信息结果输出到结果面板
+  };
+
+  var styleOptions = {
+    strokeColor: "red",    //边线颜色。
+    fillColor: "red",      //填充颜色。当参数为空时，圆形将没有填充效果。
+    strokeWeight: 3,       //边线的宽度，以像素为单位。
+    strokeOpacity: 0.8,    //边线透明度，取值范围0 - 1。
+    fillOpacity: 0.6,      //填充的透明度，取值范围0 - 1。
+    strokeStyle: 'solid' //边线的样式，solid或dashed。
+  }
+  //实例化鼠标绘制工具
+  var drawingManager = new BMapLib.DrawingManager(map, {
+    isOpen: false, //是否开启绘制模式
+    enableDrawingTool: true, //是否显示工具栏
+    drawingToolOptions: {
+      anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
+      offset: new BMap.Size(700, 10), //偏离值
+      scale: 0.8 //工具栏缩放比例
+    },
+    enableCalculate: true,
+    //circleOptions: styleOptions, //圆的样式
+    // polylineOptions: styleOptions, //线的样式
+    //polygonOptions: styleOptions, //多边形的样式
+    rectangleOptions: styleOptions //矩形的样式
   });
 
-  function getBoundary(city) {
-    var bdary = new BMap.Boundary();
-    bdary.get(city, function (rs) {       //获取行政区域
-      map.clearOverlays();        //清除地图覆盖物
-      var count = rs.boundaries.length; //行政区域的点有多少个
-      if (count === 0) {
-        alert('未能获取当前输入行政区域');
-        return;
-      }
-      var pointArray = [];
-      for (var i = 0; i < count; i++) {
-        var ply = new BMap.Polygon(rs.boundaries[i], {strokeWeight: 2, strokeColor: "#ff0000"}); //建立多边形覆盖物
-        map.addOverlay(ply);  //添加覆盖物
-        pointArray = pointArray.concat(ply.getPath());
-		console.info(rs.boundaries[i]);
-      }
-      var pathStr = "";
-      var pathMc = "";
-      for (var i = 0; i < pointArray.length; i++) {
 
-        var mc = mercatorProjection.lngLatToPoint(pointArray[i]);
-        pathStr += pointArray[i].lng + "," + pointArray[i].lat + ";";
-        pathMc += mc.x + "," + mc.y + ";";
-      }
-      $('#pathStr').html(pathStr);
-      $('#pathMc').html(pathMc);
-      var ply = new BMap.Polygon(pointArray, {strokeWeight: 2, strokeColor: "#ff0000"}); //建立多边形覆盖物
-      var bounds = ply.getBounds();
-      var ne = bounds.getNorthEast();
-      var sw = bounds.getSouthWest();
-      var neMc = mercatorProjection.lngLatToPoint(ne);
-      var swMc = mercatorProjection.lngLatToPoint(sw);
-      var str = "经纬度:左下角,右上角：" + sw.lng + "," + sw.lat + ";" + ne.lng + "," + ne.lat
-          + "<br/>墨卡托坐标:左下角,右上角：" + swMc.x + "," + swMc.y + ";" + neMc.x + "," + neMc.y;
-      $('#result').html(str);
-      //console.log(bounds);
-      map.setViewport(pointArray);    //调整视野
-    });
+  //添加鼠标绘制工具监听事件，用于获取绘制结果
+  drawingManager.addEventListener('overlaycomplete', overlaycomplete);
+
+
+  function clearAll() {
+    for (var i = 0; i < overlays.length; i++) {
+      map.removeOverlay(overlays[i]);
+    }
+    overlays.length = 0
+    $("#result").val("");
   }
 
-  //getBoundary('北京');
-</script> 
+
+  function callBack(data) {
+    var point = { lng: -1, lat: -1 };
+
+    if (data.error == 0) {
+      point.lng = window.atob(data.x);
+      point.lat = window.atob(data.y);
+
+      appendResult( "lng:" + point.lng + ";;lat:" + point.lat + "\n");
+
+    }
+
+  }
+  function changeOverlays(overlay) {
+     var swlng = overlays[0].Vu.Ul.lng;
+     var swlat = overlays[0].Vu.Ul.lat;
+     appendResult( "lng:" + swlng + ";;lat:" + swlat + "\n");
+
+
+     var nelng = overlays[0].Vu.Dl.lng;
+     var nelat = overlays[0].Vu.Dl.lat;
+     appendResult( "lng:" + nelng + ";;lat:" + nelat + "\n");
+
+     changePoint(swlng, swlat);
+     changePoint(nelng, nelat);
+  }
+
+  function appendResult(value){
+      var ls = $("#result").val();
+      ls +=value;
+      $("#result").val(ls);
+  }
+
+  function changePoint(lng, lat) {
+    var urlStr = "http://api.map.baidu.com/ag/coord/convert?from=0&to=3&x=" + lng + "&y=" + lat + "&callback=callBack";
+    jQuery.getScript(urlStr);
+
+  }
+
+  // 编码
+  //window.btoa('china is so nb')
+  // 解码
+  //window.atob("Y2hpbmEgaXMgc28gbmI=")
+
+  function download() {
+    downloadRect();
+
+  }
+
+function downloadRect() {
+    var rectList = $("#result").val().split("\n");
+    if(rectList.length>3){
+        var rect1 = rectList[2].split(";;");
+        var swlng = rect1[0].split("lng:")[1];
+        var swlat = rect1[1].split("lat:")[1];
+
+        var rect2 = rectList[3].split(";;");
+        var nelng = rect2[0].split("lng:")[1];
+        var nelat = rect2[1].split("lat:")[1];
+
+        var level_start = $("#level_start").val();
+        var level_end = $("#level_end").val();
+        var style = $("#style").val();
+
+        var urlStr = "/baidu/download/onePosition?swlng=" + swlng + "&swlat=" + swlat + "&nelng="+nelng+"&nelat="+nelat+"&level_start="
+        +level_start+"&level_end="+level_end+"&style="+style;
+      jQuery.getScript(urlStr);
+    }
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>

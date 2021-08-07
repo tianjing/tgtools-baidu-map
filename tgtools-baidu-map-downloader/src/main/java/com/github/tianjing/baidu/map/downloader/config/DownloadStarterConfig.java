@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 测试下载任务
  */
-@Configuration
+//@Configuration
 public class DownloadStarterConfig {
 
     @Bean
