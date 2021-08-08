@@ -7,33 +7,28 @@
     <meta name="Keywords" content="">
     <meta name="Description" content="">
     <title>Document</title>
-    <!--    <link rel="stylesheet" href="ui/leaflet1.3/leaflet.css">-->
 
     <script src="js/jquery-1.11.3.min.js"></script>
     <script src="webjars/map/leaflet/leafletboot1.js"></script>
 
-    <!--    <script src="ui/leaflet1.3/leaflet-src.js"></script>-->
-
-
-    <!--    <script src="ui/leaflet1.3/proj4/proj4.js"></script>-->
-    <!--    <script src="ui/leaflet1.3/proj4/proj4leaflet.js"></script>-->
-    <!--    <script src="ui/leaflet1.3/leaflet-baidu/tileLayer.baidu.js"></script>-->
     <style>
-       html,body{
+    html,body,#mapdiv{
          height:100%;
         }
-
-
-
-
-
-
+    #panel {
+      position: absolute;
+      left: 5px;
+      top: 5px;
+    }
     </style>
 </head>
 <body style="font-size:20px;letter-spacing:2px;line-height:1.5em;font-family: Helvetica, 'Hiragino Sans GB', 'Microsoft Yahei', '微软雅黑', Arial, sans-serif;text-align: center;">
-<div style="width:100%;height:100%;">
-    <div>
-        图层样式<select id="style">
+
+    <div id="mapdiv" style="width:100%;margin:auto"></div>
+
+    <div id="panel">
+        <div>
+            图层样式<select id="style">
         <option value="normal" selected="selected">normal</option>
         <option value="light">light</option>
         <option value="dark">dark</option>
@@ -42,15 +37,13 @@
         <option value="grassgreen">grassgreen</option>
         <option value="midnight">midnight</option>
         <option value="pink">pink</option>
-    </select>
-
+        </select>
         中心
         lng:<input style="width:100px;" id="lng" type="number" value="32.05000">
         lat:<input style="width:100px;" id="lat" type="number" value="118.78333">
         <button onclick="reload();" style="bottom: 50px;">重新加载</button>
     </div>
-    <div id="mapdiv" style="width:100%;height:90%;margin:auto"></div>
-</div>
+    </div>
 </body>
 <script type="text/javascript">
 	$(document).ready(function(){

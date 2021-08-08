@@ -2,6 +2,7 @@ package com.github.tianjing.baidu.map.common.service;
 
 import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
 import com.github.tianjing.baidu.map.common.service.custom.CustomFileTileService;
+import com.github.tianjing.baidu.map.common.service.custom.CustomH2TileService;
 import com.github.tianjing.baidu.map.common.service.custom.CustomSqliteTileService;
 
 /**
@@ -15,7 +16,8 @@ public class TileServiceFactory {
         switch (pSaveMode) {
             case "file":
                 return new CustomFileTileService();
-
+            case "h2":
+                return new CustomH2TileService();
             case "sqlite":
             default:
                 return new CustomSqliteTileService();

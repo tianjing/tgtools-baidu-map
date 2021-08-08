@@ -2,7 +2,7 @@
 
 
 map.baidu.download.path: ./GisMap
-map.baidu.download.save-mode: sqlite
+map.baidu.download.save-mode: h2
 # 最大线程数量
 #map.baidu.download.thread: 101
 # 存储磁盘位置

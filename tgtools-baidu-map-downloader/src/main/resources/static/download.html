@@ -29,10 +29,11 @@
 .BMapLib_circle{display:none;}
 .BMapLib_marker{display:none;}
 
-
-
     </style>
     <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="js/sockjs.min.js"></script>
+    <script src="js/stomp.min.js"></script>
+
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1XjLLEhZhQNUzd93EjU5nOGQ"></script>
     <script type="text/javascript"
             src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
@@ -51,7 +52,7 @@
     <div>
         边界经纬度坐标
         <textarea id="result" readonly="readonly" style="width: 300px;height:70px;"></textarea>
-        图层LEVEL<input style="width:35px;" id="level_start" type="number" value="5">
+        图层LEVEL<input style="width:35px;" id="level_start" type="number" value="3">
         -
         <input style="width:35px;" id="level_end" type="number" value="15">
         图层样式<select id="style">
@@ -67,6 +68,8 @@
         <button onclick="clearAll();" style="bottom: 50px;">清除框选</button>
         <button onclick="clearAll();" style="bottom: 50px;">清除框选</button>
         <button onclick="download();" style="bottom: 50px;">下载选择的地图</button>
+        <button onclick="broadcast();" style="bottom: 50px;">日志测试</button>
+        日志：<textarea id="log" readonly="readonly" style="width: 300px;height:70px;"></textarea>
     </div>
 </div>
 </body>
@@ -123,7 +126,7 @@
     enableDrawingTool: true, //是否显示工具栏
     drawingToolOptions: {
       anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
-      offset: new BMap.Size(700, 10), //偏离值
+      offset: new BMap.Size(0, 10), //偏离值
       scale: 0.8 //工具栏缩放比例
     },
     enableCalculate: true,
@@ -221,23 +224,33 @@ function downloadRect() {
 
 
 
+    var stomp = null;
+   function initSocket() {
+        var url = "http://127.0.0.1:8080/websocket/log"
+        var socket = new SockJS(url);
+        stomp = Stomp.over(socket);
+        //连接
+        stomp.connect({}, function (frame) {
+            //订阅广播
+            stomp.subscribe("/topic/broadcast", function (res) {
+                $("#log").append(res.body+"\n");
+                document.getElementById("log").scrollTop = document.getElementById("log").scrollHeight;
+            });
+        });
+     }
+    initSocket();
+
+    function disconnect() {
+        if (stomp != null) {
+            stomp.disconnect();
+        }
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //发送广播消息
+    function broadcast() {
+        stomp.send("/topic/broadcast", {}, JSON.stringify({"body":"12312312"}))
+    }
 
 
 

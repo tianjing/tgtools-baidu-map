@@ -3,10 +3,10 @@ package com.github.tianjing.baidu.map.common.dowloader;
 import com.github.tianjing.baidu.map.common.bean.Position;
 import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
 import com.github.tianjing.baidu.map.common.bean.Tile;
+import com.github.tianjing.baidu.map.common.util.LogHelper;
+import com.github.tianjing.baidu.map.common.util.StompUtil;
 import com.github.tianjing.baidu.map.common.util.ThreadPool;
 import com.github.tianjing.baidu.map.common.util.TileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tgtools.util.StringUtil;
 
 import java.math.BigDecimal;
@@ -23,7 +23,6 @@ import java.util.concurrent.LinkedBlockingQueue;
  **/
 public class MapDownloader {
 
-    private final Logger logger = LoggerFactory.getLogger(MapDownloader.class);
     private BlockingQueue<Tile> tileQueue = new LinkedBlockingQueue<>();
     private int maxQueueSize = 1000000;
     private ThreadPool threadPool;
@@ -51,18 +50,18 @@ public class MapDownloader {
                 threadPool.execute(() -> {
                     Tile tile = tileQueue.poll();
                     if (tileQueue.size() % 1000 == 0) {
-                        logger.info("下载队列 size：{}", tileQueue.size());
+                        LogHelper.info("下载队列 size：{}", tileQueue.size());
                     }
                     if (tile != null) {
                         downloader.download(tile, 0);
                     } else {
-                        logger.info("本节点任务下载完成");
+                        LogHelper.info("本节点任务下载完成");
                     }
                 });
             }
             threadPool.shutdown();
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LogHelper.error(e.getMessage(), e);
         }
     }
 
@@ -78,7 +77,7 @@ public class MapDownloader {
                 addChinaTileQueue();
             }).start();
         } else {
-            logger.error("download.scale 配置错误");
+            LogHelper.error("download.scale 配置错误");
         }
         Thread.sleep(3000);
     }
@@ -116,7 +115,7 @@ public class MapDownloader {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LogHelper.error(e.getMessage(), e);
         }
     }
 
@@ -194,8 +193,9 @@ public class MapDownloader {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LogHelper.error(e.getMessage(), e);
         }
-        logger.info("tileQueue size:" + tileQueue.size());
+
+        LogHelper.info("tileQueue size:" + tileQueue.size());
     }
 }

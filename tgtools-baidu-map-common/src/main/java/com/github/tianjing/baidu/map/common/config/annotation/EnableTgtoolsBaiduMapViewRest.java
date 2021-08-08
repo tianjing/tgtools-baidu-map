@@ -1,6 +1,7 @@
 package com.github.tianjing.baidu.map.common.config.annotation;
 
 
+import com.github.tianjing.baidu.map.common.config.TgtoolsBaiduMapLogWebSocketConfig;
 import com.github.tianjing.baidu.map.common.config.TgtoolsBaiduMapViewRestConfig;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 
@@ -16,6 +17,6 @@ import java.lang.annotation.Target;
 @Documented
 @EnableTgtoolsBaiduMapProperty
 @ImportAutoConfiguration({
-        TgtoolsBaiduMapViewRestConfig.class})
+        TgtoolsBaiduMapViewRestConfig.class, TgtoolsBaiduMapLogWebSocketConfig.class})
 public @interface EnableTgtoolsBaiduMapViewRest {
 }

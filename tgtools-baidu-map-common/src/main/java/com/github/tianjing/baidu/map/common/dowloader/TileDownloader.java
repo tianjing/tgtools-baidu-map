@@ -5,6 +5,7 @@ import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
 import com.github.tianjing.baidu.map.common.bean.Tile;
 import com.github.tianjing.baidu.map.common.service.TileService;
 import com.github.tianjing.baidu.map.common.service.TileServiceFactory;
+import com.github.tianjing.baidu.map.common.util.LogHelper;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.CookieSpecs;
@@ -25,7 +26,6 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class TileDownloader {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private Random random = new Random();
     private HttpClientGenerator httpClientGenerator;
     private Integer maxRetryTime = 3;
@@ -70,18 +70,18 @@ public class TileDownloader {
                 //FileUtils.copyToFile(inputStream, png);
                 long sz = completeSize.addAndGet(1);
                 if (sz % 1000 == 0) {
-                    logger.info("下载完成：{}，tile：{}", sz, tile.toString());
+                    LogHelper.info("下载完成：{}，tile：{}", sz, tile.toString());
                 }
             } else {
                 if (retryTime > maxRetryTime) {
-                    logger.error("下载失败，状态码：{}，tile：{}", statusCode, tile.toString());
+                    LogHelper.error("下载失败，状态码：{}，tile：{}", statusCode, tile.toString());
                 } else {
                     download(tile, retryTime++);
                 }
             }
         } catch (IOException e) {
             if (retryTime > maxRetryTime) {
-                logger.error("下载瓦片失败：{}", tile.toString());
+                LogHelper.error("下载瓦片失败：{}", tile.toString());
             } else {
                 download(tile, retryTime++);
             }
