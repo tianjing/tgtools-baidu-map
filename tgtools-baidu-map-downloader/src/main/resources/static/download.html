@@ -126,7 +126,7 @@
     enableDrawingTool: true, //是否显示工具栏
     drawingToolOptions: {
       anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
-      offset: new BMap.Size(0, 10), //偏离值
+      offset: new BMap.Size(0, 250), //偏离值
       scale: 0.8 //工具栏缩放比例
     },
     enableCalculate: true,
@@ -205,9 +205,26 @@ function downloadRect() {
         var swlng = rect1[0].split("lng:")[1];
         var swlat = rect1[1].split("lat:")[1];
 
+        swlng = Number.parseFloat(swlng);
+        swlat = Number.parseFloat(swlat);
+
         var rect2 = rectList[3].split(";;");
         var nelng = rect2[0].split("lng:")[1];
         var nelat = rect2[1].split("lat:")[1];
+        nelng = Number.parseFloat(nelng);
+        nelat = Number.parseFloat(nelat);
+
+        if(swlng>nelng){
+            var temp =  swlng;
+            swlng = nelng;
+            nelng = temp;
+        }
+
+        if(swlat>nelat){
+            var temp =  swlat;
+            swlat = nelat;
+            nelat = temp;
+        }
 
         var level_start = $("#level_start").val();
         var level_end = $("#level_end").val();
