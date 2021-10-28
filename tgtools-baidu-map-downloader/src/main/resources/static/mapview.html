@@ -9,8 +9,14 @@
     <title>Document</title>
 
     <script src="js/jquery-1.11.3.min.js"></script>
-    <script src="webjars/map/leaflet/leafletboot1.js"></script>
+<!--    <script src="webjars/map/leaflet/leafletboot1.js"></script>-->
+<!--    <script src="/webjars/map/leaflet/leaflet-src.js" type="text/javascript" ></script>-->
+    <script src="/webjars/map/leaflet/leaflet-src.js" type="text/javascript" ></script>
+    <link href="/webjars/map/leaflet/leaflet.css" rel="stylesheet"  type="text/css" />
 
+    <script src="/webjars/map/leaflet/proj4/proj4-compressed.js" type="text/javascript" ></script>
+    <script src="/webjars/map/leaflet/proj4/proj4leaflet.js" type="text/javascript" ></script>
+    <script src="/webjars/map/leaflet/leaflet-baidu/tileLayer.baidu.js" type="text/javascript" ></script>
     <style>
     html,body,#mapdiv{
          height:100%;
@@ -59,10 +65,10 @@
        }
 
        if(null == lng || ""== lng){
-            lng =32.05000;
+            lng =118.78333;
        }
        if(null == lat || ""== lat){
-            lat =118.78333;
+            lat =32.05000;
        }
 
        $("#style").val(style);
@@ -71,7 +77,7 @@
 
 
 		var options = {
-            center: [lng,lat], // The initial center(baidu BD-09 format) of map
+            center: [lat,lng], // The initial center(baidu BD-09 format) of map
             zoom: 8, // initial zoom of map
 			crs: L.CRS.Baidu,
 			layers: [new L.tileLayer.baidu({
@@ -81,7 +87,8 @@
 			})]
         };
         var map = L.map("mapdiv", options);
-		L.marker([lng,lat]).addTo(map).bindTooltip("中心点").openTooltip();
+
+		L.marker([lat,lng]).addTo(map).bindTooltip("中心点").openTooltip();
   }
 
 function reload()

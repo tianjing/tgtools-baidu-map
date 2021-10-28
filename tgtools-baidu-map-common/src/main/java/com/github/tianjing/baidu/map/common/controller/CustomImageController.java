@@ -1,6 +1,7 @@
 package com.github.tianjing.baidu.map.common.controller;
 
 import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
+import com.github.tianjing.baidu.map.common.service.TileService;
 import com.github.tianjing.baidu.map.common.service.TileServiceFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,8 @@ public class CustomImageController {
 
 
     protected TgtoolsBaiduMapProperty tgtoolsBaiduMapProperty;
+    //初始化
+    protected TileService tileService;
 
     public TgtoolsBaiduMapProperty getDownloadBaiduConfig() {
         return tgtoolsBaiduMapProperty;
@@ -27,6 +30,7 @@ public class CustomImageController {
 
     public void setDownloadBaiduConfig(TgtoolsBaiduMapProperty pDownloadBaiduConfig) {
         tgtoolsBaiduMapProperty = pDownloadBaiduConfig;
+        tileService = TileServiceFactory.getTileService(pDownloadBaiduConfig);
     }
 
     @RequestMapping("/tile")
@@ -40,7 +44,7 @@ public class CustomImageController {
         pResponse.setContentType("image/png");
 
         pResponse.getOutputStream().write(
-                TileServiceFactory.getTileService(tgtoolsBaiduMapProperty).getTile(Integer.valueOf(vX), Integer.valueOf(vY), Integer.valueOf(vZ), vCustomId)
+                tileService.getTile(Integer.valueOf(vX), Integer.valueOf(vY), Integer.valueOf(vZ), vCustomId)
         );
     }
 }

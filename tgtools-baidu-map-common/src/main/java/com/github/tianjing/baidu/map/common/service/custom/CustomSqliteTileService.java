@@ -51,6 +51,7 @@ public class CustomSqliteTileService implements TileService {
             if (DataTable.hasData(vTable)) {
                 return (byte[]) vTable.getRow(0).getValue("FILE");
             }
+            logger.info(String.format("获取切片地图无效！x:%s y:%s zoom:%s theme:%s", pX, pY, pZoom, pTheme));
             return new byte[0];
         } catch (Exception e) {
             logger.error(String.format("获取切片地图出错！x:%s y:%s zoom:%s theme:%s", pX, pY, pZoom, pTheme), e);

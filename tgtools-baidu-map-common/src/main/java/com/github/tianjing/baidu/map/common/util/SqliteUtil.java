@@ -1,6 +1,9 @@
 package com.github.tianjing.baidu.map.common.util;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tgtools.data.DataTable;
 import tgtools.db.DataSourceDataAccess;
 import tgtools.exceptions.APPErrorException;
 
@@ -10,8 +13,11 @@ import tgtools.exceptions.APPErrorException;
  * @desc
  **/
 public class SqliteUtil {
+    protected static Logger logger = LoggerFactory.getLogger(SqliteUtil.class);
 
     public static void initDB(String pFilePath) throws APPErrorException {
+        System.out.println("SqliteUtil initDB");
+        logger.info("SqliteUtil initDB");
         createDB(pFilePath);
         createCustomTable();
     }
@@ -50,8 +56,22 @@ public class SqliteUtil {
             if (e.toString().indexOf("table CUSTOM already exists") < 1) {
                 throw e;
             } else {
-                System.out.println("表已存在");
+                logger.info("表已存在");
             }
+        }
+    }
+
+    protected static void testCustomTable() throws APPErrorException {
+        String vSql = "select count(*) as num CUSTOM ;";
+        try {
+            String num = "0";
+            DataTable vTable = tgtools.db.DataBaseFactory.get("SQLITEDATAACCESS").query(vSql);
+            if (DataTable.hasData(vTable)) {
+                num = vTable.getRow(0).getValue("NUM").toString();
+            }
+            logger.info("测试图层数：" + num);
+        } catch (Exception e) {
+            logger.error("测试图层数失败！原因：" + e, e);
         }
     }
 
