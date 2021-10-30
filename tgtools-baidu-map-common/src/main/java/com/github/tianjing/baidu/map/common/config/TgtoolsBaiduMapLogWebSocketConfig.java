@@ -15,7 +15,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
  * @date 2021-08-08 14:49
  * @desc
  **/
-@Configuration
 @EnableWebSocketMessageBroker
 public class TgtoolsBaiduMapLogWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 

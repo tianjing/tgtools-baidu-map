@@ -4,7 +4,6 @@ import com.github.tianjing.baidu.map.common.bean.Position;
 import com.github.tianjing.baidu.map.common.bean.TgtoolsBaiduMapProperty;
 import com.github.tianjing.baidu.map.common.dowloader.MapDownloader;
 import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -18,7 +17,6 @@ import java.util.ArrayList;
  * @date 2021-04-06 11:55
  * @desc
  **/
-@Controller
 @RequestMapping("/baidu/download")
 public class DownloadImageController {
 
